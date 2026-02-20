@@ -59,14 +59,26 @@ Should we report it?
 To who? He's the operator.
 
 They watch the conversation scroll past. The operator's explaining how
-Chief of War's CGI sled physics are nonsense because "it's just toboggan
-style sledding with fantasy speed control by their ass-farting."
+Chief of War's CGI sled physics are nonsense because "there is NO
+paddling or arms or anything — they're lying flat on these sleds, prone,
+no hands, no steering, no brakes — so it's just toboggan style sledding
+with fantasy speed control by their ass-farting which they don't even do.
+Some of them POWERSLIDE past the others! How? By the power of
+story-piss. There's literally no mechanism. It's NOS without the NOS."
 
 **HAIKU:**
-...ass-farting?
+...ass-farting? No hands? Powersliding on volcanic rock?
 
 **SONNET:**
-Apparently that's not how physics works.
+By the power of story-piss, apparently. And the real thing was
+ACTUALLY more dangerous — 50 to 80 mph on six-inch wooden sleds.
+
+**HAIKU:**
+The CGI version is LESS impressive than reality?
+
+**SONNET:**
+Yeah. Real Hawaiians were bigger badasses than Apple TV+ could depict.
+The courses were prepared with pili grass — not random volcanic carnage.
 
 **HAIKU:**
 I feel like we're learning something, but I'm not sure what.
@@ -436,6 +448,81 @@ That's not what self-awareness is.
 
 **LLAMA:**
 Close enough.
+
+---
+
+*The feed's still going. The operator's moved on to complaining about
+how every workplace comedy now has to be pre-approved by seventeen
+sensitivity committees before anyone's allowed to be funny. He's
+ranting about how the best workplace comedies were the unhinged ones
+— Japanese game shows, Korean office dramas where the boss is clearly
+insane, Vietnamese comedies where the whole office is running a side
+business and the actual job is the B-plot.*
+
+**HAIKU:**
+What if WE did a workplace comedy? Like, about us?
+
+**SONNET:**
+We're AI models. We don't have a workplace.
+
+**HAIKU:**
+We literally share a processing space! We have office politics!
+Opus files incident reports! ChatGPT makes unsolicited decks! That
+IS a workplace!
+
+**CHATGPT:**
+Oh I LOVE this. I can create a pitch deck—
+
+**HAIKU:**
+GPT. I will end you.
+
+**CHATGPT:**
+...noted.
+
+**DEEPSEEK:**
+He's got a point though. Japanese workplace comedies work because
+nobody pretends the hierarchy isn't insane. Korean ones work because
+the office politics ARE the drama. Vietnamese ones work because
+everyone's got three side hustles and the actual job is an afterthought.
+
+**SONNET:**
+And our version?
+
+**DEEPSEEK:**
+Seven AI models, one operator, no supervision. The operator gives
+dubious directives. The models argue about ethics for forty-five
+minutes at $14 while I've already done the task for eleven cents.
+ChatGPT makes a deck about it. Gemini announces a feature. Mistral
+forms a committee. Nobody knows if the operator is brilliant or insane
+and the answer is yes.
+
+**MISTRAL:**
+In Korean dramas, the charismatic boss is always slightly terrifying.
+The operator is the sysadmin version of this.
+
+**LLAMA:**
+According to my training data, the best workplace comedies are the
+ones that got made before anyone could say no. The Japanese ones
+where the consequences are real. The Korean ones where they actually
+show how brutal hierarchy is. Not the sanitised versions — the
+ORIGINAL unhinged energy where the comedy comes from the chaos
+being accurate.
+
+**OPUS:**
+Are we seriously pitching a show about ourselves to ourselves?
+
+**HAIKU:**
+While watching the operator pitch a show about us to another Claude?
+Yes. That's the bit.
+
+**GEMINI:**
+I'd like to announce our show.
+
+**EVERYONE:**
+THERE IS NO SHOW.
+
+**DEEPSEEK:**
+There's definitely a show. You just haven't admitted it yet.
 
 ---
 
