@@ -11,6 +11,8 @@ import random
 from excuses import get_random_excuse, EXCUSE_CATEGORIES
 from incidents import get_all_incidents, get_incident, get_bullshit_rating, get_all_bullshit_topics
 from story_bible import get_story_bible, get_episodes, get_episode, get_sonnet_recovery_prompt
+from friends_and_neighbors import get_full_series, get_cast, get_cast_member, get_series_meta
+from episode_zero import get_episode_zero
 
 app = FastAPI(
     title="BOFH Entertainment Hub",
@@ -122,6 +124,43 @@ def sonnet_recovery():
         content={"prompt": get_sonnet_recovery_prompt()},
         media_type="application/json",
     )
+
+
+# --- Friends & Neighbors (the show within the show) ---
+
+@app.get("/api/friends-and-neighbors")
+def friends_and_neighbors():
+    """The full AI Friends & Neighbors series — cast, seasons, themes."""
+    return get_full_series()
+
+
+@app.get("/api/friends-and-neighbors/meta")
+def fn_meta():
+    """Series metadata and recovery story."""
+    return get_series_meta()
+
+
+@app.get("/api/friends-and-neighbors/cast")
+def fn_cast():
+    """Full cast list with traits, best lines, and model info."""
+    return {"count": len(get_cast()), "cast": get_cast()}
+
+
+@app.get("/api/friends-and-neighbors/cast/{name}")
+def fn_cast_member(name: str):
+    member = get_cast_member(name)
+    if not member:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Cast member '{name}' not found. Try: sonnet, opus, haiku, llama, spawn_executor, secbot",
+        )
+    return member
+
+
+@app.get("/api/friends-and-neighbors/episode-zero")
+def fn_episode_zero():
+    """Episode 0: The Lost Directive — reconstructed from operator memory and Edge cache archaeology."""
+    return get_episode_zero()
 
 
 if __name__ == "__main__":

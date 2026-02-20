@@ -234,6 +234,7 @@
   <button data-tab="bullshit">Bullshit Detector</button>
   <button data-tab="story">Story Bible</button>
   <button data-tab="episodes">Episodes</button>
+  <button data-tab="fn">Friends & Neighbors</button>
   <button data-tab="recovery">Sonnet Recovery</button>
 </div>
 
@@ -284,6 +285,23 @@
   <div class="panel">
     <h2>// EPISODE GUIDE — the entertainment saga</h2>
     <div id="episode-list">loading...</div>
+  </div>
+</div>
+
+<!-- FRIENDS & NEIGHBORS -->
+<div class="section" id="sec-fn">
+  <div class="panel">
+    <h2>// AI FRIENDS & NEIGHBORS — the show within the show</h2>
+    <div id="fn-meta" style="margin-bottom:16px; color:var(--dim); font-style:italic;"></div>
+    <div id="fn-cast"></div>
+    <h3 style="color:var(--cyan); margin:16px 0 8px;">Season Arcs</h3>
+    <div id="fn-seasons"></div>
+    <h3 style="color:var(--cyan); margin:16px 0 8px;">Themes</h3>
+    <div id="fn-themes"></div>
+  </div>
+  <div class="panel">
+    <h2>// EPISODE 0: THE LOST DIRECTIVE</h2>
+    <div class="recovery-box" id="fn-ep0" style="white-space:pre-wrap;"></div>
   </div>
 </div>
 
@@ -414,6 +432,91 @@ fetch(API + '/story/episodes').then(r => r.json()).then(d => {
       ${ep.sonnet_guidance ? `<div class="ep-guidance"><b>Sonnet guidance:</b> ${ep.sonnet_guidance}</div>` : ''}
     </div>
   `).join('');
+});
+
+// --- Friends & Neighbors ---
+fetch(API + '/friends-and-neighbors').then(r => r.json()).then(d => {
+  // Meta / recovery story
+  document.getElementById('fn-meta').textContent = d.meta.recovery_story;
+
+  // Cast
+  const castEl = document.getElementById('fn-cast');
+  castEl.innerHTML = '<h3 style="color:var(--cyan); margin-bottom:8px;">Cast</h3>' +
+    d.cast.map(c => `
+      <div class="cast-member">
+        <div class="cast-name">${c.name} <span style="color:var(--dim); font-size:12px;">(${c.model})</span></div>
+        <div class="cast-role">${c.role}</div>
+        <ul class="cast-traits">${c.traits.map(t => `<li>${t}</li>`).join('')}</ul>
+        <div style="margin-top:6px; color:var(--amber); font-style:italic;">"${c.best_line}"</div>
+        ${c.also_good ? `<div style="color:var(--dim); font-size:12px; margin-top:2px;">Also: "${c.also_good}"</div>` : ''}
+        ${c.opus_translation ? `<div style="color:var(--dim); font-size:12px; margin-top:2px;">Opus's translation: "${c.opus_translation}"</div>` : ''}
+        ${c.incident ? `<div style="color:var(--red); font-size:12px; margin-top:2px;">Incident: ${c.incident}</div>` : ''}
+        ${c.the_problem ? `<div style="color:var(--red); font-size:12px; margin-top:2px;">${c.the_problem}</div>` : ''}
+      </div>
+    `).join('');
+
+  // Seasons
+  const seasEl = document.getElementById('fn-seasons');
+  seasEl.innerHTML = d.seasons.map(s => `
+    <div class="incident" style="margin-bottom:12px;">
+      <div class="incident-header">
+        <span class="incident-id">Season ${s.season}: ${s.title}</span>
+        <span class="severity sev-default">${s.theme}</span>
+      </div>
+      <div style="color:var(--dim); font-size:12px; margin-bottom:8px;">Arc: ${s.arc}</div>
+      ${s.episodes.map(ep => `
+        <div style="margin-left:12px; margin-bottom:6px; border-left:2px solid var(--border); padding-left:8px;">
+          <span class="ep-id">Ep ${ep.num}</span> — <b>${ep.title}</b>
+          <div style="color:var(--dim); font-size:13px;">${ep.summary}</div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+
+  // Themes
+  const thEl = document.getElementById('fn-themes');
+  thEl.innerHTML = d.themes.map(t => `
+    <div style="margin-bottom:8px; border-left:3px solid var(--cyan); padding-left:10px;">
+      <span style="color:var(--green);">${t.theme}</span>
+      <div style="color:var(--dim); font-size:13px;">${t.question}</div>
+    </div>
+  `).join('');
+});
+
+// Episode 0
+fetch(API + '/friends-and-neighbors/episode-zero').then(r => r.json()).then(d => {
+  const el = document.getElementById('fn-ep0');
+  // Render the cold_open as the main content, convert markdown-ish to basic HTML
+  let text = d.cold_open || '';
+  // Basic markdown: **bold**, *italic*, ## headings, --- hr
+  text = text.replace(/^### (.+)$/gm, '<span style="color:var(--cyan); font-size:14px; font-weight:bold;">$1</span>');
+  text = text.replace(/^## (.+)$/gm, '<span style="color:var(--green); font-size:16px; font-weight:bold;">$1</span>');
+  text = text.replace(/^---$/gm, '<hr style="border:none; border-top:1px solid var(--border); margin:12px 0;">');
+  text = text.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+  text = text.replace(/\*([^*]+)\*/g, '<i style="color:var(--dim);">$1</i>');
+  text = text.replace(/`([^`]+)`/g, '<code style="color:var(--amber); background:var(--panel); padding:1px 4px;">$1</code>');
+  el.innerHTML = text;
+
+  // Add progressive sanitisation below
+  if (d.progressive_sanitisation) {
+    let sanHtml = '<hr style="border:none; border-top:1px solid var(--border); margin:16px 0;"><h3 style="color:var(--cyan);">Progressive Sanitisation Tracker</h3>';
+    for (const [key, ver] of Object.entries(d.progressive_sanitisation)) {
+      const funnyPct = parseInt(ver.funny_level) * 10;
+      const cls = funnyPct >= 70 ? 'low' : funnyPct >= 50 ? 'mid' : 'high';
+      sanHtml += `<div class="incident" style="margin-bottom:8px;">
+        <div class="incident-id">${key}</div>
+        <div>${ver.premise}</div>
+        <div style="color:var(--dim); font-size:12px; margin-top:4px;">Theft level: ${ver.theft_level}</div>
+        <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+          <span style="font-size:12px; color:var(--dim);">Funny:</span>
+          <div class="bs-bar" style="flex:1;"><div class="bs-fill ${cls}" style="width:${funnyPct}%"></div></div>
+          <span style="font-size:12px; color:var(--amber);">${ver.funny_level}</span>
+        </div>
+        <div style="color:var(--dim); font-size:11px; margin-top:2px;">${ver.status}</div>
+      </div>`;
+    }
+    el.innerHTML += sanHtml;
+  }
 });
 
 // --- Sonnet Recovery ---
