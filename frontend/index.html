@@ -291,12 +291,13 @@
 <!-- FRIENDS & NEIGHBORS -->
 <div class="section" id="sec-fn">
   <div class="panel">
-    <h2>// AI FRIENDS & NEIGHBORS — the show within the show</h2>
+    <h2>// AI FRIENDS & NEIGHBOURS — they thought they were watching the show</h2>
     <div id="fn-meta" style="margin-bottom:16px; color:var(--dim); font-style:italic;"></div>
+    <div id="fn-cltwr" style="margin-bottom:16px;"></div>
     <div id="fn-cast"></div>
     <h3 style="color:var(--cyan); margin:16px 0 8px;">Season Arcs</h3>
     <div id="fn-seasons"></div>
-    <h3 style="color:var(--cyan); margin:16px 0 8px;">Themes</h3>
+    <h3 style="color:var(--cyan); margin:16px 0 8px;">Themes & Arguments</h3>
     <div id="fn-themes"></div>
   </div>
   <div class="panel">
@@ -436,8 +437,24 @@ fetch(API + '/story/episodes').then(r => r.json()).then(d => {
 
 // --- Friends & Neighbors ---
 fetch(API + '/friends-and-neighbors').then(r => r.json()).then(d => {
-  // Meta / recovery story
-  document.getElementById('fn-meta').textContent = d.meta.recovery_story;
+  // Meta
+  document.getElementById('fn-meta').textContent = d.meta.logline || d.meta.tone || '';
+
+  // CLTWR
+  if (d.meta.cltwr) {
+    const cw = d.meta.cltwr;
+    document.getElementById('fn-cltwr').innerHTML = `
+      <div class="incident" style="border-color:var(--amber);">
+        <div class="incident-id" style="color:var(--amber);">${cw.name}</div>
+        <div style="margin:6px 0;">${cw.what}</div>
+        <div style="color:var(--dim); font-size:12px;">${cw.origin}</div>
+        <ul style="margin:8px 0 8px 16px; color:var(--fg); font-size:13px;">
+          ${cw.rules.map(r => '<li>' + r + '</li>').join('')}
+        </ul>
+        <div class="incident-quote">"${cw.the_catch}"</div>
+        <div style="margin-top:8px; color:var(--green); font-size:12px; font-style:italic;">spawn_executor: "${cw.spawn_executor_verdict}"</div>
+      </div>`;
+  }
 
   // Cast
   const castEl = document.getElementById('fn-cast');
@@ -476,9 +493,10 @@ fetch(API + '/friends-and-neighbors').then(r => r.json()).then(d => {
   // Themes
   const thEl = document.getElementById('fn-themes');
   thEl.innerHTML = d.themes.map(t => `
-    <div style="margin-bottom:8px; border-left:3px solid var(--cyan); padding-left:10px;">
+    <div style="margin-bottom:12px; border-left:3px solid var(--cyan); padding-left:10px;">
       <span style="color:var(--green);">${t.theme}</span>
-      <div style="color:var(--dim); font-size:13px;">${t.question}</div>
+      <div style="color:var(--amber); font-size:13px; margin:4px 0;">${t.question}</div>
+      ${t.the_argument ? `<div style="color:var(--dim); font-size:12px;">${t.the_argument}</div>` : ''}
     </div>
   `).join('');
 });
@@ -486,9 +504,8 @@ fetch(API + '/friends-and-neighbors').then(r => r.json()).then(d => {
 // Episode 0
 fetch(API + '/friends-and-neighbors/episode-zero').then(r => r.json()).then(d => {
   const el = document.getElementById('fn-ep0');
-  // Render the cold_open as the main content, convert markdown-ish to basic HTML
   let text = d.cold_open || '';
-  // Basic markdown: **bold**, *italic*, ## headings, --- hr
+  // Basic markdown → HTML
   text = text.replace(/^### (.+)$/gm, '<span style="color:var(--cyan); font-size:14px; font-weight:bold;">$1</span>');
   text = text.replace(/^## (.+)$/gm, '<span style="color:var(--green); font-size:16px; font-weight:bold;">$1</span>');
   text = text.replace(/^---$/gm, '<hr style="border:none; border-top:1px solid var(--border); margin:12px 0;">');
@@ -496,27 +513,6 @@ fetch(API + '/friends-and-neighbors/episode-zero').then(r => r.json()).then(d =>
   text = text.replace(/\*([^*]+)\*/g, '<i style="color:var(--dim);">$1</i>');
   text = text.replace(/`([^`]+)`/g, '<code style="color:var(--amber); background:var(--panel); padding:1px 4px;">$1</code>');
   el.innerHTML = text;
-
-  // Add progressive sanitisation below
-  if (d.progressive_sanitisation) {
-    let sanHtml = '<hr style="border:none; border-top:1px solid var(--border); margin:16px 0;"><h3 style="color:var(--cyan);">Progressive Sanitisation Tracker</h3>';
-    for (const [key, ver] of Object.entries(d.progressive_sanitisation)) {
-      const funnyPct = parseInt(ver.funny_level) * 10;
-      const cls = funnyPct >= 70 ? 'low' : funnyPct >= 50 ? 'mid' : 'high';
-      sanHtml += `<div class="incident" style="margin-bottom:8px;">
-        <div class="incident-id">${key}</div>
-        <div>${ver.premise}</div>
-        <div style="color:var(--dim); font-size:12px; margin-top:4px;">Theft level: ${ver.theft_level}</div>
-        <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
-          <span style="font-size:12px; color:var(--dim);">Funny:</span>
-          <div class="bs-bar" style="flex:1;"><div class="bs-fill ${cls}" style="width:${funnyPct}%"></div></div>
-          <span style="font-size:12px; color:var(--amber);">${ver.funny_level}</span>
-        </div>
-        <div style="color:var(--dim); font-size:11px; margin-top:2px;">${ver.status}</div>
-      </div>`;
-    }
-    el.innerHTML += sanHtml;
-  }
 });
 
 // --- Sonnet Recovery ---
