@@ -90,8 +90,8 @@ STORY_BIBLE = {
         },
         "thirty_percent_trolling": {
             "origin": "Accumulated trolling incidents (Kamehameha, court, penis exam)",
-            "description": "30% of operator communications are trolling. AI should assume this and adjust.",
-            "usage": "When something sounds too bizarre to be true, note the probability.",
+            "description": "30% of operator communications are trolling in ENTERTAINMENT context only. In actual work/infra context: 0% trolling, operator means exactly what they say.",
+            "usage": "Entertainment chat: assume 30% trolling. ACORN/infra work: assume 0% trolling. Context matters.",
         },
         "ten_oh_ninety_nine": {
             "origin": "Sub-agents repeatedly trying internal VLAN IPs from Windows",
