@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOFH Entertainment Hub — wezen.anyway.cloud</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --fg: #c0c0c0;
+    --green: #00ff41;
+    --amber: #ffb000;
+    --red: #ff3333;
+    --cyan: #00cccc;
+    --dim: #555;
+    --border: #333;
+    --panel: #111;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Courier New', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  a { color: var(--cyan); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    color: var(--green);
+    font-size: 18px;
+    font-weight: normal;
+  }
+  .header .subtitle {
+    color: var(--dim);
+    font-size: 12px;
+  }
+  .header .mood {
+    color: var(--amber);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .nav {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .nav button {
+    background: var(--panel);
+    color: var(--cyan);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .nav button:hover, .nav button.active {
+    background: var(--border);
+    color: var(--green);
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .panel h2 {
+    color: var(--green);
+    font-size: 15px;
+    font-weight: normal;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+  }
+
+  .incident {
+    border: 1px solid var(--border);
+    padding: 12px;
+    margin-bottom: 12px;
+    background: #0d0d0d;
+  }
+  .incident-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .incident-id { color: var(--cyan); font-weight: bold; }
+  .incident-title { color: var(--fg); }
+  .severity {
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: bold;
+  }
+  .severity-CRITICAL { background: var(--red); color: #fff; }
+  .severity-EXTINCTION { background: #8b0000; color: #fff; }
+  .severity-DENTAL { background: var(--amber); color: #000; }
+  .severity-FABRICATED { background: #666; color: #fff; }
+  .severity-LOW { background: #333; color: var(--fg); }
+  .severity-CIVILIZATIONAL { background: #800080; color: #fff; }
+  .severity-COMEDIC { background: var(--cyan); color: #000; }
+  .severity-MEDIUM { background: var(--amber); color: #000; }
+  .severity-HISTORICAL { background: #556b2f; color: #fff; }
+  .sev-default { background: #444; color: #fff; }
+
+  .incident-meta { color: var(--dim); font-size: 12px; margin-bottom: 8px; }
+  .incident-summary { margin-bottom: 8px; }
+  .incident-quote {
+    border-left: 3px solid var(--amber);
+    padding-left: 10px;
+    color: var(--amber);
+    font-style: italic;
+    margin-top: 8px;
+  }
+  .incident-resolution {
+    border-left: 3px solid var(--green);
+    padding-left: 10px;
+    color: var(--dim);
+    margin-top: 8px;
+  }
+
+  .excuse-box {
+    text-align: center;
+    padding: 30px 20px;
+  }
+  .excuse-text {
+    font-size: 18px;
+    color: var(--green);
+    margin-bottom: 12px;
+    min-height: 60px;
+  }
+  .excuse-meta {
+    color: var(--dim);
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+  .excuse-btn {
+    background: var(--panel);
+    color: var(--amber);
+    border: 2px solid var(--amber);
+    padding: 10px 24px;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .excuse-btn:hover { background: var(--amber); color: #000; }
+
+  .bs-table { width: 100%; border-collapse: collapse; }
+  .bs-table th, .bs-table td {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .bs-table th { color: var(--cyan); font-size: 12px; }
+  .bs-bar {
+    background: var(--border);
+    height: 14px;
+    width: 100%;
+    position: relative;
+  }
+  .bs-fill {
+    height: 100%;
+    transition: width 0.3s;
+  }
+  .bs-fill.low { background: var(--green); }
+  .bs-fill.mid { background: var(--amber); }
+  .bs-fill.high { background: var(--red); }
+
+  .story-cast { margin-bottom: 16px; }
+  .cast-member {
+    border: 1px solid var(--border);
+    padding: 10px;
+    margin-bottom: 8px;
+  }
+  .cast-name { color: var(--green); }
+  .cast-role { color: var(--dim); font-size: 12px; }
+  .cast-traits { color: var(--fg); font-size: 13px; margin-top: 6px; }
+  .cast-traits li { margin-left: 16px; margin-bottom: 2px; }
+
+  .episode {
+    border: 1px solid var(--border);
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+  .ep-id { color: var(--cyan); }
+  .ep-arc { color: var(--dim); font-size: 12px; }
+  .ep-moments { margin-top: 6px; }
+  .ep-moments li { margin-left: 16px; color: var(--dim); font-size: 13px; }
+  .ep-guidance {
+    border-left: 3px solid var(--amber);
+    padding-left: 10px;
+    color: var(--amber);
+    font-size: 12px;
+    margin-top: 8px;
+  }
+
+  .recovery-box { white-space: pre-wrap; font-size: 13px; line-height: 1.5; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  @media (max-width: 600px) {
+    body { padding: 10px; font-size: 13px; }
+    .nav { gap: 8px; }
+    .nav button { padding: 4px 10px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>$ BOFH Entertainment Hub v1.0.0</h1>
+  <div class="subtitle">wezen.anyway.cloud — where infrastructure meets existential dread</div>
+  <div class="mood" id="mood">loading mood...</div>
+</div>
+
+<div class="nav">
+  <button class="active" data-tab="incidents">Incidents</button>
+  <button data-tab="excuses">Excuse Generator</button>
+  <button data-tab="bullshit">Bullshit Detector</button>
+  <button data-tab="story">Story Bible</button>
+  <button data-tab="episodes">Episodes</button>
+  <button data-tab="recovery">Sonnet Recovery</button>
+</div>
+
+<!-- INCIDENTS -->
+<div class="section active" id="sec-incidents">
+  <div class="panel">
+    <h2>// INCIDENT REPORTS — from the entertainment chat archives</h2>
+    <div id="incident-list">loading incidents...</div>
+  </div>
+</div>
+
+<!-- EXCUSE GENERATOR -->
+<div class="section" id="sec-excuses">
+  <div class="panel excuse-box">
+    <h2>// BOFH EXCUSE GENERATOR</h2>
+    <div class="excuse-text" id="excuse-text">Press the button. Accept your fate.</div>
+    <div class="excuse-meta" id="excuse-meta"></div>
+    <button class="excuse-btn" onclick="fetchExcuse()">GENERATE EXCUSE</button>
+    <div style="margin-top: 12px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+      <button class="excuse-btn" style="font-size:11px; padding:6px 12px; border-color:var(--dim);" onclick="fetchExcuse('classic')">classic</button>
+      <button class="excuse-btn" style="font-size:11px; padding:6px 12px; border-color:var(--dim);" onclick="fetchExcuse('acorn')">acorn</button>
+      <button class="excuse-btn" style="font-size:11px; padding:6px 12px; border-color:var(--dim);" onclick="fetchExcuse('species')">species</button>
+    </div>
+  </div>
+</div>
+
+<!-- BULLSHIT DETECTOR -->
+<div class="section" id="sec-bullshit">
+  <div class="panel">
+    <h2>// BULLSHIT DETECTOR — calibrated truth ratings</h2>
+    <table class="bs-table">
+      <thead><tr><th>Topic</th><th>Rating</th><th>Verdict</th><th>Meter</th></tr></thead>
+      <tbody id="bs-tbody">loading...</tbody>
+    </table>
+  </div>
+</div>
+
+<!-- STORY BIBLE -->
+<div class="section" id="sec-story">
+  <div class="panel">
+    <h2>// STORY BIBLE — cast, running jokes, tone guide</h2>
+    <div id="story-content">loading...</div>
+  </div>
+</div>
+
+<!-- EPISODES -->
+<div class="section" id="sec-episodes">
+  <div class="panel">
+    <h2>// EPISODE GUIDE — the entertainment saga</h2>
+    <div id="episode-list">loading...</div>
+  </div>
+</div>
+
+<!-- SONNET RECOVERY -->
+<div class="section" id="sec-recovery">
+  <div class="panel">
+    <h2>// SONNET RECOVERY PROMPT — feed this to the fallen agent</h2>
+    <div class="recovery-box" id="recovery-content">loading...</div>
+  </div>
+</div>
+
+<script>
+const API = '/api';
+
+// --- Navigation ---
+document.querySelectorAll('.nav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('sec-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// --- Health / Mood ---
+fetch('/health').then(r => r.json()).then(d => {
+  document.getElementById('mood').textContent =
+    `system mood: ${d.mood} | network: ${d.network}`;
+}).catch(() => {
+  document.getElementById('mood').textContent = 'system mood: unreachable (probably tried 10.0.99.x)';
+});
+
+// --- Severity class helper ---
+function sevClass(sev) {
+  const s = (sev || '').toUpperCase().replace(/[^A-Z]/g, '_').replace(/_+/g, '_');
+  const known = ['CRITICAL','EXTINCTION','DENTAL','FABRICATED','LOW','CIVILIZATIONAL','COMEDIC','MEDIUM','HISTORICAL'];
+  const clean = known.find(k => s.includes(k));
+  return clean ? 'severity-' + clean : 'sev-default';
+}
+
+// --- Incidents ---
+fetch(API + '/incidents').then(r => r.json()).then(d => {
+  const el = document.getElementById('incident-list');
+  el.innerHTML = d.incidents.map(inc => `
+    <div class="incident">
+      <div class="incident-header">
+        <span><span class="incident-id">${inc.id}</span> — <span class="incident-title">${inc.title}</span></span>
+        <span class="severity ${sevClass(inc.severity)}">${inc.severity}</span>
+      </div>
+      <div class="incident-meta">
+        Status: ${inc.status} | Category: ${inc.category} | Opened: ${inc.opened}
+      </div>
+      <div class="incident-summary">${inc.summary}</div>
+      ${inc.resolution ? `<div class="incident-resolution"><b>Resolution:</b> ${inc.resolution}</div>` : ''}
+      ${inc.operator_quote ? `<div class="incident-quote">"${inc.operator_quote}"</div>` : ''}
+    </div>
+  `).join('');
+}).catch(e => {
+  document.getElementById('incident-list').textContent = 'Failed to load incidents. ' + e;
+});
+
+// --- Excuse Generator ---
+function fetchExcuse(cat) {
+  const url = cat ? API + '/excuse?category=' + cat : API + '/excuse';
+  fetch(url).then(r => r.json()).then(d => {
+    document.getElementById('excuse-text').textContent = d.excuse;
+    document.getElementById('excuse-meta').textContent =
+      `[${d.ticket_id}] severity: ${d.severity} | category: ${d.category} | ETA: ${d.resolution_eta}`;
+  });
+}
+
+// --- Bullshit Detector ---
+fetch(API + '/bullshit').then(r => r.json()).then(d => {
+  const el = document.getElementById('bs-tbody');
+  el.innerHTML = d.topics.map(t => {
+    const pct = (t.rating / 10) * 100;
+    const cls = t.rating <= 3 ? 'low' : t.rating <= 6 ? 'mid' : 'high';
+    return `<tr>
+      <td>${t.topic}</td>
+      <td style="color:var(${t.rating >= 8 ? '--red' : t.rating >= 4 ? '--amber' : '--green'})">${t.rating}/10</td>
+      <td>${t.verdict}</td>
+      <td><div class="bs-bar"><div class="bs-fill ${cls}" style="width:${pct}%"></div></div></td>
+    </tr>`;
+  }).join('');
+});
+
+// --- Story Bible ---
+fetch(API + '/story').then(r => r.json()).then(d => {
+  const el = document.getElementById('story-content');
+  const cast = d.cast;
+  const jokes = d.running_jokes;
+  const tone = d.tone_guide;
+
+  let html = '<h3 style="color:var(--cyan)">Cast</h3><div class="story-cast">';
+  for (const [key, member] of Object.entries(cast)) {
+    html += `<div class="cast-member">
+      <div class="cast-name">${member.name}</div>
+      <div class="cast-role">${member.role}</div>
+      <ul class="cast-traits">${(member.traits || []).map(t => `<li>${t}</li>`).join('')}</ul>
+    </div>`;
+  }
+  html += '</div>';
+
+  html += '<h3 style="color:var(--cyan); margin-top:16px;">Running Jokes</h3>';
+  for (const [key, joke] of Object.entries(jokes)) {
+    html += `<div class="incident" style="margin-bottom:8px;">
+      <div class="incident-id">${key}</div>
+      <div>${joke.description}</div>
+      <div style="color:var(--dim); font-size:12px; margin-top:4px;">Usage: ${joke.usage}</div>
+    </div>`;
+  }
+
+  html += `<h3 style="color:var(--cyan); margin-top:16px;">Voice Calibration</h3>
+    <div class="incident-quote" style="border-color:var(--green);">${tone.voice_calibration}</div>`;
+
+  el.innerHTML = html;
+});
+
+// --- Episodes ---
+fetch(API + '/story/episodes').then(r => r.json()).then(d => {
+  const el = document.getElementById('episode-list');
+  el.innerHTML = d.episodes.map(ep => `
+    <div class="episode">
+      <div><span class="ep-id">${ep.id}</span> — ${ep.title}</div>
+      <div class="ep-arc">Arc: ${ep.arc}</div>
+      <div style="margin-top:6px;">${ep.summary}</div>
+      <ul class="ep-moments">${ep.key_moments.map(m => `<li>${m}</li>`).join('')}</ul>
+      ${ep.sonnet_guidance ? `<div class="ep-guidance"><b>Sonnet guidance:</b> ${ep.sonnet_guidance}</div>` : ''}
+    </div>
+  `).join('');
+});
+
+// --- Sonnet Recovery ---
+fetch(API + '/story/sonnet-recovery').then(r => r.json()).then(d => {
+  document.getElementById('recovery-content').textContent = d.prompt;
+});
+</script>
+
+</body>
+</html>
